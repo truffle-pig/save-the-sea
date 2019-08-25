@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+             "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.truffle.mapper.SignMapper">
+
+	<update id="saveImage" parameterType="java.util.Map">
+		UPDATE
+		user
+		SET img= #{IMAGE}
+		WHERE id = #{USERID}
+	</update>
+
+	<insert id="signUp" useGeneratedKeys="true" keyProperty="id">
+		INSERT
+		INTO
+		user (id,name,email)
+		VALUES ( #{id},#{name}, #{email})
+	</insert>
+
+	<select id="userLogin" parameterType="java.util.Map" resultType="team.truffle.VO.User">
+		SELECT *
+		FROM user
+		WHERE email = #{email}
+	</select>
+
+
+
+
+</mapper>
