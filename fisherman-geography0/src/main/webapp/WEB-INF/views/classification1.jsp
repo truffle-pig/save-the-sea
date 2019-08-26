@@ -1,12 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.Date, java.text.SimpleDateFormat"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
-<c:url var="R" value="/" />
 <!DOCTYPE HTML>
 <html>
+
 <head lang="ko">
 <title>어부지리</title>
 <meta charset="utf-8" />
@@ -19,26 +15,21 @@
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>
-	$(".hover").mouseleave(function() {
-		$(this).removeClass("hover");
-	});
-</script>
+        $(".hover").mouseleave(
+            function () {
+                $(this).removeClass("hover");
+            }
+        );
+    </script>
 </head>
 
 <body class="is-preload">
-
-	<%
-		Date now = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 M월 d일 E요일");
-		String today = sdf.format(now);
-	%>
-
 
 	<div id="wrap">
 		<!-- logo -->
 		<header>
 			<div id="content-logo">
-				<a href="/login" target="_self"><img
+				<a href="/main" target="_self"><img
 					src="/res/images/logo_no_bg.png" alt="logo"></a>
 			</div>
 			<div id="rank">
@@ -52,14 +43,19 @@
 					</ul>
 				</c:if>
 				</p>
-
 			</div>
 		</header>
-		<div class="recomend">
+		<div class="open_file">
+			<form action="/fileUpload" id="fileUpload" name="fileUpload"
+				method="post" enctype="multipart/form-data">
 
-			<span class="selector"> <%=today%>
-			</span>
+				파일 : <input type="file" name="file"><br> <input
+					type="submit" name="업로드" value="제출"><br>
+			</form>
 		</div>
+
+
+	</div>
 	</div>
 
 
@@ -67,15 +63,11 @@
 
 	<!-- Scripts -->
 	<script>
-		if ('addEventListener' in window) {
-			window.addEventListener('load', function() {
-				document.body.className = document.body.className.replace(
-						/\bis-preload\b/, '');
-			});
-			document.body.className += (navigator.userAgent
-					.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
-		}
-	</script>
+        if ('addEventListener' in window) {
+            window.addEventListener('load', function () { document.body.className = document.body.className.replace(/\bis-preload\b/, ''); });
+            document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+        }
+    </script>
 
 </body>
 

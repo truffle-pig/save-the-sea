@@ -23,8 +23,6 @@ public class SignService {
 		return signMapper.userLogin(loginMap);
 	}
 
-	public void saveImage(Map<String, Object> userIMG) {
-		signMapper.saveImage(userIMG);
-	}
+	
 
 }

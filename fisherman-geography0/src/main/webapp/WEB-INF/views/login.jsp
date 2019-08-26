@@ -29,7 +29,7 @@
 		<section id="main">
 			<header>
 				<!-- 여기에 유저 사진을 입력 기본은 따로, -->
-				<span class="avatar"><img src="/res/img/test.jpg"
+				<span class="avatar"><img src="/profileImageDisplay?id=${loginUser.userId}"
 					alt="user_profile_image" width="20%" /></span>
 				<h2>${loginUser.name}</h2>
 			</header>
@@ -42,6 +42,8 @@
 					<li><a href="/fishbowl"><img
 							src="/res/images/fishing-net.png" alt=""></a>Fishbowl</li>
 				</ul>
+				
+				<input type="button" value="LOGOUT" onclick="location.href='/logout'">
 			</footer>
 		</section>
 

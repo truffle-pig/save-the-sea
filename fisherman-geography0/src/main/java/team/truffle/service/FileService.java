@@ -19,45 +19,29 @@ public class FileService {
 	@Autowired
 	ImageMapper imageMapper;
 	
-	public static byte[] fileToBinary(File file) {
-	    String out = new String();
-	    FileInputStream fis = null;
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	 
-	    try {
-	        fis = new FileInputStream(file);
-	    } catch (FileNotFoundException e) {
-	        System.out.println("Exception position : FileUtil - fileToString(File file)");
-	    }
-	 
-	    int len = 0;
-	    byte[] buf = new byte[1024];
-	    try {
-	        while ((len = fis.read(buf)) != -1) {
-	            baos.write(buf, 0, len);
-	        }
-	 
-	        byte[] fileArray = baos.toByteArray();
-	        out = new String(base64Enc(fileArray));
-	 
-	        fis.close();
-	        baos.close();
-	    } catch (IOException e) {
-	        System.out.println("Exception position : FileUtil - fileToString(File file)");
-	    }
-	 
-	    return out.getBytes();
+	//유저 프로필 사진 디비에 저장
+	public void saveProfileImage(Map<String, Object> userIMG) {
+		imageMapper.saveProfileImage(userIMG);
 	}
-	 
-	public static byte[] base64Enc(byte[] buffer) {
-	    return Base64.encodeBase64(buffer);
-	}
-
+	
+	//유저Id로 프로필사진 불러오기
 	public Map<String, Object> getByteImage(int userId){
 		Map<String,Object> map =imageMapper.getByteImage(userId);
 		if(map!=null)System.out.println(map);
 		return map;
 	}
+	//사용자가 올린 물고기 사진 디비에 저장
+	public void saveFishImageToDB(Map<String, Object> userIMG) {
+		imageMapper.saveFishImageToDB(userIMG);
+		
+	}
+	//uuId로 물고기사진 불러오기
+	public Map<String, Object> getFishByteImage(String imageId) {
+		return imageMapper.getFishByteImage(imageId);
+	}
+
+	
+	
 
 
 }

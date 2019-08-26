@@ -5,13 +5,7 @@
 
 <mapper namespace="team.truffle.mapper.SignMapper">
 
-	<update id="saveImage" parameterType="java.util.Map">
-		UPDATE
-		user
-		SET img= #{IMAGE}
-		WHERE id = #{USERID}
-	</update>
-
+	
 	<insert id="signUp" useGeneratedKeys="true" keyProperty="id">
 		INSERT
 		INTO

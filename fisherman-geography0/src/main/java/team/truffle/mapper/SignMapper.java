@@ -13,6 +13,6 @@ public interface SignMapper {
 
 	User userLogin(Map<String, Object> loginMap);
 
-	void saveImage(Map<String, Object> userIMG);
+	
 
 }

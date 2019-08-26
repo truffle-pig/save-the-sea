@@ -3,6 +3,7 @@ package team.truffle.controller;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,13 +51,14 @@ public class MainController {
 
 	@Autowired
 	private SignService signService;
-
+	
+//맨 처음 접속하는 페이지
 	@RequestMapping(value="/")
 	public String index() {
 
-		return "index2";
+		return "intro";
 	}
-
+//로그인 페이지
 	@RequestMapping(value="/login")
 	public String login(@RequestParam("code") String code,HttpSession session) {
 
@@ -81,22 +83,24 @@ public class MainController {
 			user.setEmail((String) userInfo.get("email"));
 			signService.signUp(user);
 			int userId=Integer.parseInt((String) userInfo.get("id"));
-			Image image = null;
+
+			ByteArrayOutputStream  baos = null;  
 			try {
 				//url에서 프로필 이미지 끌어와서 로컬에 저장
 				URL url = new URL((String) profile.get("profileImageURL"));
 				BufferedImage img = ImageIO.read(url);
-				File file=new File("C:/sts-workspace/fisherman-geography0/src/main/webapp/res/img/test.jpg");
-				ImageIO.write(img, "jpg", file);
+				baos = new ByteArrayOutputStream();
+				ImageIO.write(img, "jpg", baos); 
+				ImageIO.write(img, "jpg", new File("C:/data/userProfile.jpg"));
 
 				//파일 형태를 byte[]로 변환한 다음 user테이블에 저장
 				Map<String,Object> userIMG=new HashMap<String, Object>();
-				userIMG.put("IMAGE",  fileService.fileToBinary(file));
+				userIMG.put("IMAGE",  baos.toByteArray());
 				userIMG.put("USERID",  userId);
 				System.out.println("맵에 저장완료");
-				signService.saveImage(userIMG);
+				fileService.saveProfileImage(userIMG);
 				System.out.println("이미지 저장 쿼리문 실행");
-//				user.setImg(userIMG);
+
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -105,11 +109,12 @@ public class MainController {
 
 
 		}
+		//이미 등록된 계정인 경우 디비에서 불러와서 user 객체에 저장
 		else {
 			user=signService.userLogin(userInfo);
 		}
 		System.out.println(user.toString());
-		//로그인한 유저 객체에 앞에서 저장한 유저 정보 넣기
+		//로그인한 유저 객체에 앞에서 저장한 User 정보 넣기
 		LoggedInUser liu =new LoggedInUser();
 		liu.setUserId(user.getId());
 		liu.setEmail(user.getEmail());
@@ -118,30 +123,32 @@ public class MainController {
 
 
 
-		//    클라이언트의 이메일이 존재할 때 세션에 해당 이메일과 토큰 등록
+		//클라이언트의 이메일이 존재할 때 세션에 해당 로그인된 유저 객체과 토큰 등록
 		if (userInfo.get("email") != null) {
-			session.setAttribute("userId", userInfo.get("id"));
-			session.setAttribute("nickname", userInfo.get("nickname"));
-			session.setAttribute("profileImageURL", profile.get("profileImageURL"));
+			
 			session.setAttribute("access_Token", access_Token);
-
-
 			session.setAttribute("loginUser", liu); //세션에 로그인 정보 넣어두기.
+			session.setAttribute("user", user); 
 		}
-
-
-
-		return "index";
+		return "login";
 	}
+//로고 누르면 메인 페이지 이동	
+	@RequestMapping(value="/main")
+	public String mainPage() {
+		
+		return "login";
 
+	}
+	
+//로그아웃
 	@RequestMapping(value="/logout")
 	public String logout(HttpSession session) {
 		kakao.kakaoLogout((String)session.getAttribute("access_Token"));
 		session.removeAttribute("access_Token");
 		session.removeAttribute("userId");
-		return "index";
+		return "intro";
 	}
-
+//탈퇴
 	@RequestMapping(value="/disconnect")
 	public String disconnect(HttpSession session) {
 		kakao.kakaoDisconnect((String)session.getAttribute("access_Token"));
@@ -150,39 +157,49 @@ public class MainController {
 		return "index";
 	}
 
-	@RequestMapping(value="/getByteImage")
-	public ResponseEntity<byte[]> getByteImage(HttpSession session) {
+//	@RequestMapping(value="/getByteImage")
+//	public ResponseEntity<byte[]> getByteImage(HttpSession session) {
+//
+//
+//		Map<String, Object> map=(Map<String, Object>) session.getAttribute("map");
+//		byte[] imageContent = (byte[]) map.get("img");
+//		final HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.IMAGE_JPEG);
+//		return new ResponseEntity<byte[]>(imageContent, headers, HttpStatus.CREATED);
+//	}
 
+	
 
-		Map<String, Object> map=(Map<String, Object>) session.getAttribute("map");
-		byte[] imageContent = (byte[]) map.get("img");
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.IMAGE_JPEG);
-		return new ResponseEntity<byte[]>(imageContent, headers, HttpStatus.CREATED);
-	}
-
-	@RequestMapping(value = "/imageDisplay", method = RequestMethod.GET)
-	public void showImage(@RequestParam("id") Integer userId, HttpServletResponse response,HttpServletRequest request) 
-			throws ServletException, IOException{
-
-
-		Map<String,Object> userIMG =fileService.getByteImage(userId);  
-		byte[] userImg=(byte[])userIMG.get("img");
+	@RequestMapping(value="/recommend")
+	public String recommend() {
 		
-		response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
-		InputStream inputStream = new ByteArrayInputStream(userImg);
-		IOUtils.copy(inputStream, response.getOutputStream());
-		System.out.print(userImg.length); 
-
-		response.getOutputStream().close();
-	}
-
-	@RequestMapping(value="/profile")
-	public String profile(@RequestParam("id") int id,HttpSession session,Model model) {
-		model.addAttribute("userId", id);
-		return "userInfo";
+		return "recommend";
 
 	}
+	
+	@RequestMapping(value="/classification")
+	public String classification() {
+		
+		return "classification1";
+
+	}
+	
+	@RequestMapping(value="/fishbowl")
+	public String fishbowl(HttpSession session,Model model) {
+		
+		User user=(User)session.getAttribute("user");
+		model.addAttribute("user", user);
+		return "fishbowl";
+
+	}
+	
+	@RequestMapping(value="/point")
+	public String point() {
+		
+		return "point";
+
+	}
+
 
 
 }

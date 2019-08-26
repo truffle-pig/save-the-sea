@@ -5,10 +5,31 @@
 
 <mapper namespace="team.truffle.mapper.ImageMapper">
 
+	<update id="saveProfileImage" parameterType="java.util.Map">
+		UPDATE
+		user
+		SET
+		img=#{IMAGE}
+		WHERE id = #{USERID}
+	</update>
+
+	<insert id="saveFishImageToDB" parameterType="java.util.Map">
+		INSERT INTO
+		image (id,img)
+		VALUES (#{userId},#{img})
+	</insert>
+	
 	<select id="getByteImage" resultType="java.util.Map">
 		SELECT img
 		FROM user
-		WHERE id = #{userId}
+		WHERE id
+		= #{userId}
+	</select>
+	
+	<select id="getFishByteImage" resultType="java.util.Map">
+		SELECT img
+		FROM image
+		WHERE id = #{imageId}
 	</select>
 
 
