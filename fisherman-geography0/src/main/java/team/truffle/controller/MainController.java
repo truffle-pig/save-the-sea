@@ -2,18 +2,18 @@ package team.truffle.controller;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
-
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,14 +27,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import team.truffle.VO.User;
 import team.truffle.dto.LoggedInUser;
+import team.truffle.service.ClassficationService;
 import team.truffle.service.FileService;
 import team.truffle.service.KakaoAPI;
 import team.truffle.service.SignService;
@@ -50,7 +49,7 @@ public class MainController {
 
 	@Autowired
 	private SignService signService;
-
+	
 	@RequestMapping(value="/")
 	public String index() {
 
@@ -181,7 +180,44 @@ public class MainController {
 	public String profile(@RequestParam("id") int id,HttpSession session,Model model) {
 		model.addAttribute("userId", id);
 		return "userInfo";
+	}
+	
+	//http://localhost:8080/deeplearning/classifyFish
+	@RequestMapping(value="/deeplearning/classifyFish")
+	public String classification() {
+		
+		ClassficationService clsfctn=new ClassficationService();
+		String jsonLoc=clsfctn.classifyFish();
 
+		try{
+			//40으로 하드코딩 추후 저장된 이름값에 의해 가져오기
+			File file=new File(jsonLoc+"\\40.json");
+			
+			System.out.println(file.toString());
+			
+            FileReader filereader = new FileReader(file);
+            BufferedReader bufReader = new BufferedReader(filereader);
+            String line = "";
+            
+            while((line = bufReader.readLine()) != null){
+                System.out.println(line);
+            }
+            bufReader.close();
+        }catch (FileNotFoundException e) {
+            // TODO: handle exception
+        }catch(IOException e){
+            System.out.println(e);
+        }
+
+//		System.out.println(file.toString());
+		
+		return "deeplearning/afterClassified";
+	}
+	
+	@RequestMapping(value="/map/testMap")
+	public String testMap() {
+
+		return "map/testMap";
 	}
 
 
